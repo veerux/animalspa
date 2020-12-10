@@ -9,7 +9,7 @@ def get_last_id():
     return last_service.id + 1
 
 
-class Recipe:
+class Service:
     def __init__(self, name, description, duration):
         self.id = get_last_id()
         self.name = name
@@ -18,4 +18,4 @@ class Recipe:
 
     @property
     def data(self):
-        return {'id': self.id, 'name': self.name, 'description': self.description, 'num_of_servings': self.duration}
+        return {'id': self.id, 'name': self.name, 'description': self.description, 'duration': self.duration}

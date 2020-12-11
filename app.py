@@ -7,6 +7,7 @@ from resources.user import UserListResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
 from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)

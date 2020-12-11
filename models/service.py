@@ -1,3 +1,4 @@
+from extensions import db
 service_list = []
 
 
@@ -9,13 +10,13 @@ def get_last_id():
     return last_service.id + 1
 
 
-class Service:
-    def __init__(self, name, description, duration):
-        self.id = get_last_id()
-        self.name = name
-        self.description = description
-        self.duration = duration
-
-    @property
-    def data(self):
-        return {'id': self.id, 'name': self.name, 'description': self.description, 'duration': self.duration}
+class Service(db.Model):
+    __tablename__ = 'service'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200))
+    duration = db.Column(db.Integer)
+    is_publish = db.Column(db.Boolean(), default=False)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
+    user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))

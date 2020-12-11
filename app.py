@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from config import Config
 from extensions import db
-from models.user import User
+from resources.user import UserListResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
 
 
@@ -23,6 +23,7 @@ def register_extensions(app):
 
 def register_resources(app):
     api = Api(app)
+    api.add_resource(UserListResource, '/users')
     api.add_resource(ServiceListResource, '/services')
     api.add_resource(ServiceResource, '/services/<int:service_id>')
     api.add_resource(ServicePublishResource, '/services/<int:service_id>/publish')

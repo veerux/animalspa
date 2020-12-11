@@ -5,7 +5,7 @@ from config import Config
 from extensions import db
 from resources.user import UserListResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
-
+from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource
 
 def create_app():
     app = Flask(__name__)
@@ -27,6 +27,9 @@ def register_resources(app):
     api.add_resource(ServiceListResource, '/services')
     api.add_resource(ServiceResource, '/services/<int:service_id>')
     api.add_resource(ServicePublishResource, '/services/<int:service_id>/publish')
+    api.add_resource(ReservationListResource, '/reservations')
+    api.add_resource(ReservationResource, '/reservations/<int:service_id>')
+    api.add_resource(ReservationPublishResource, '/reservations/<int:service_id>/publish')
 
 
 if __name__ == '__main__':

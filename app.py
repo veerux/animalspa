@@ -1,8 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
-
-from Config import Config
+from config import Config
 from extensions import db
 from models.user import User
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
@@ -15,7 +14,6 @@ def create_app():
     register_extensions(app)
     register_resources(app)
     return app
-
 
 
 def register_extensions(app):

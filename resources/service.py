@@ -24,12 +24,19 @@ class ServiceListResource(Resource):
 
 
 class ServiceResource(Resource):
+
+    @jwt_optional
     def get(self, service_id):
-        service = next((service for service in service_list if service.id == service_id and service.is_publish == True),
-                       None)
+        service = Service.get_by_id(service_id=service_id)
         if service is None:
-            return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
-        return service.data, HTTPStatus.OK
+            return {'message': 'Service not found'}, HTTPStatus.NOT_FOU
+        current_user = get_jwt_identity()
+
+        if service.is_publish == False and service.user_id != current_user:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        return service.data(), HTTPStatus.OK
+
 
     def put(self, service_id):
         data = request.get_json()

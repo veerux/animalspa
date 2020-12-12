@@ -10,7 +10,7 @@ class ServiceListResource(Resource):
         data = []
         for service in services:
             if service.is_publish is True:
-                data.append(service.data)
+                data.append(service.data())
                 return {'data': data}, HTTPStatus.OK
 
     @jwt_required

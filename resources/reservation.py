@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from models.reservation import Reservation
 
+
 class ReservationListResource(Resource):
     def get(self):
         reservations = Reservation.get_all_published()
@@ -18,7 +19,7 @@ class ReservationListResource(Resource):
         json_data = request.get_json()
         current_user = get_jwt_identity()
         reservation = Reservation(name=json_data['name'], pet=json_data['pet'], service=json_data['service'],
-                        user_id=current_user)
+                                  user_id=current_user)
         reservation.save()
         return reservation.data(), HTTPStatus.CREATED
 
@@ -51,15 +52,16 @@ class ReservationResource(Resource):
         return reservation.data(), HTTPStatus.OK
 
     @jwt_required
-	def delete(self, reservation_id):
-		reservation = Reservation.get_by_id(reservation_id=reservation_id)
-		if reservation is None:
-			return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND
-		current_user = get_jwt_identity()
-		if current_user != reservation.user_id:
-			return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
-		reservation.delete()
-		return {}, HTTPStatus.NO_CONTENT
+    def delete(self, reservation_id):
+        reservation = Reservation.get_by_id(reservation_id=reservation_id)
+        if reservation is None:
+            return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != reservation.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        reservation.delete()
+        return {}, HTTPStatus.NO_CONTENT
+
 
 class ReservationPublishResource(Resource):
     def put(self, reservation_id):

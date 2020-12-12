@@ -32,10 +32,8 @@ class ServiceResource(Resource):
         if service is None:
             return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
         current_user = get_jwt_identity()
-
         if service.is_publish == False and service.user_id != current_user:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
-
         return service.data(), HTTPStatus.OK
 
     @jwt_required
@@ -45,15 +43,24 @@ class ServiceResource(Resource):
         if service is None:
             return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
         current_user = get_jwt_identity()
-
         if current_user != service.user_id:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         service.name = json_data['name']
         service.description = json_data['description']
         service.duration = json_data['duration']
-
         service.save()
         return service.data(), HTTPStatus.OK
+
+    @jwt_required
+    def delete(self, service_id):
+        service = Service.get_by_id(service_id=service_id)
+        if service is None:
+            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != service.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        service.delete()
+        return {}, HTTPStatus.NO_CONTENT
 
 
 class ServicePublishResource(Resource):

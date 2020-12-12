@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
-
+from models.service import Service
 
 class ServiceListResource(Resource):
     def get(self):
@@ -62,6 +62,8 @@ class ServicePublishResource(Resource):
             return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
         service.is_publish = True
         return {}, HTTPStatus.NO_CONTENT
+
+
 
     def delete(self, service_id):
         service = next((service for service in service_list if service.id == service_id), None)

@@ -41,7 +41,7 @@ class ServiceResource(Resource):
     def put(self, service_id):
         json_data = request.get_json()
         service = Service.get_by_id(service_id=service_id)
-        if recipe is None:
+        if service is None:
             return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
         current_user = get_jwt_identity()
 

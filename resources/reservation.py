@@ -17,7 +17,7 @@ class ReservationListResource(Resource):
     def post(self):
         json_data = request.get_json()
         current_user = get_jwt_identity()
-        reservation = Reservation(name=json_data['name'], description=json_data['description'], duration=json_data['duration'],
+        reservation = Reservation(name=json_data['name'], description=json_data['pet'], duration=json_data['service'],
                         user_id=current_user)
         reservation.save()
         return reservation.data(), HTTPStatus.CREATED

@@ -29,7 +29,7 @@ class ServiceResource(Resource):
     def get(self, service_id):
         service = Service.get_by_id(service_id=service_id)
         if service is None:
-            return {'message': 'Service not found'}, HTTPStatus.NOT_FOU
+            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
         current_user = get_jwt_identity()
 
         if service.is_publish == False and service.user_id != current_user:
@@ -37,16 +37,22 @@ class ServiceResource(Resource):
 
         return service.data(), HTTPStatus.OK
 
-
+    @jwt_required
     def put(self, service_id):
-        data = request.get_json()
-        service = next((service for service in service_list if service.id == service_id), None)
-        if service is None:
-            return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
-        service.name = data['name']
-        service.description = data['description']
-        service.duration = data['duration']
-        return service.data, HTTPStatus.OK
+        json_data = request.get_json()
+        service = Service.get_by_id(service_id=service_id)
+        if recipe is None:
+            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+
+        if current_user != service.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        service.name = json_data['name']
+        service.description = json_data['description']
+        service.duration = json_data['duration']
+
+        service.save()
+        return service.data(), HTTPStatus.OK
 
 
 class ServicePublishResource(Resource):

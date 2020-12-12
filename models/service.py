@@ -1,13 +1,4 @@
 from extensions import db
-service_list = []
-
-
-def get_last_id():
-    if service_list:
-        last_service = service_list[-1]
-    else:
-        return 1
-    return last_service.id + 1
 
 
 class Service(db.Model):
@@ -20,3 +11,23 @@ class Service(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
+
+    def data(self):
+        return {'id': self.id, 'name': self.name, 'description': self.description, 'duration': self.duration,
+                'user_id': self.user_id}
+
+    @classmethod
+    def get_all_published(cls):
+        return cls.query.filter_by(is_publish=True).all()
+
+    @classmethod
+    def get_by_id(cls, recipe_id):
+        return cls.query.filter_by(id=recipe_id).first()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

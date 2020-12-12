@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from models.service import Service
 
+
 class ServiceListResource(Resource):
     def get(self):
         services = Service.get_all_published()
@@ -18,7 +19,7 @@ class ServiceListResource(Resource):
         json_data = request.get_json()
         current_user = get_jwt_identity()
         service = Service(name=json_data['name'], description=json_data['description'], duration=json_data['duration'],
-                        user_id=current_user)
+                          user_id=current_user)
         service.save()
         return service.data(), HTTPStatus.CREATED
 
@@ -62,8 +63,6 @@ class ServicePublishResource(Resource):
             return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
         service.is_publish = True
         return {}, HTTPStatus.NO_CONTENT
-
-
 
     def delete(self, service_id):
         service = next((service for service in service_list if service.id == service_id), None)

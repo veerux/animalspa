@@ -2,10 +2,11 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
 from config import Config
-from extensions import db
-from resources.user import UserListResource
+from extensions import db, jwt
+from resources.user import UserListResource, UserResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
 from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource
+from resources.token import TokenResource
 
 
 def create_app():
@@ -20,17 +21,24 @@ def create_app():
 def register_extensions(app):
     db.init_app(app)
     migrate = Migrate(app, db)
+    jwt.init_app(app)
 
 
 def register_resources(app):
     api = Api(app)
+    #user
     api.add_resource(UserListResource, '/users')
+    api.add_resource(UserResource, '/users/<string:username>')
+    #services
     api.add_resource(ServiceListResource, '/services')
     api.add_resource(ServiceResource, '/services/<int:service_id>')
     api.add_resource(ServicePublishResource, '/services/<int:service_id>/publish')
+    #reservations
     api.add_resource(ReservationListResource, '/reservations')
     api.add_resource(ReservationResource, '/reservations/<int:service_id>')
     api.add_resource(ReservationPublishResource, '/reservations/<int:service_id>/publish')
+    #token
+    api.add_resource(TokenResource, '/token')
 
 
 if __name__ == '__main__':

@@ -86,16 +86,26 @@ class ReservationResource(Resource):
 
 
 class ReservationPublishResource(Resource):
+    @jwt_required
     def put(self, reservation_id):
-        reservation = next((reservation for reservation in reservation_list if reservation.id == reservation_id), None)
+        reservation = Reservation.get_by_id(reservation_id=reservation_id)
         if reservation is None:
             return {'message': 'reservation not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != reservation.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         reservation.is_publish = True
+        reservation.save()
         return {}, HTTPStatus.NO_CONTENT
 
+    @jwt_required
     def delete(self, reservation_id):
-        reservation = next((reservation for reservation in reservation_list if reservation.id == reservation_id), None)
+        reservation = Reservation.get_by_id(reservation_id=reservation_id)
         if reservation is None:
             return {'message': 'reservation not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != reservation.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         reservation.is_publish = False
+        reservation.save()
         return {}, HTTPStatus.NO_CONTENT

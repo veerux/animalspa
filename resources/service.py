@@ -12,7 +12,7 @@ service_list_schema = ServiceSchema(many=True)
 class ServiceListResource(Resource):
     def get(self):
         services = Service.get_all_published()
-        return service_list_schema.dump(services).data, HTTPStatus.OK
+        return service_list_schema.dump(services), HTTPStatus.OK
 
     @jwt_required
     def post(self):
@@ -24,7 +24,7 @@ class ServiceListResource(Resource):
         service = Service(**data)
         service.user_id = current_user
         service.save()
-        return service_schema.dump(service).data, HTTPStatus.CREATED
+        return service_schema.dump(service), HTTPStatus.CREATED
 
     @jwt_required
     def patch(self, service_id):
@@ -43,7 +43,7 @@ class ServiceListResource(Resource):
         service.duration = data.get('duration') or service.duration
 
         service.save()
-        return service_schema.dump(service).data, HTTPStatus.OK
+        return service_schema.dump(service), HTTPStatus.OK
 
 
 class ServiceResource(Resource):

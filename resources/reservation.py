@@ -12,7 +12,7 @@ reservation_list_schema = ReservationSchema(many=True)
 class ReservationListResource(Resource):
     def get(self):
         reservations = Reservation.get_all_published()
-        return reservation_list_schema.dump(reservations).data, HTTPStatus.OK
+        return reservation_list_schema.dump(reservations), HTTPStatus.OK
 
     @jwt_required
     def post(self):
@@ -24,7 +24,7 @@ class ReservationListResource(Resource):
         reservation = Reservation(**data)
         reservation.user_id = current_user
         reservation.save()
-        return reservation_schema.dump(reservation).data, HTTPStatus.CREATED
+        return reservation_schema.dump(reservation), HTTPStatus.CREATED
 
     @jwt_required
     def patch(self, reservation_id):
@@ -43,7 +43,7 @@ class ReservationListResource(Resource):
         reservation.service = data.get('service') or reservation.service
 
         reservation.save()
-        return reservation_schema.dump(reservation).data, HTTPStatus.OK
+        return reservation_schema.dump(reservation), HTTPStatus.OK
 
 
 class ReservationResource(Resource):

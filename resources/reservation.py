@@ -39,8 +39,8 @@ class ReservationListResource(Resource):
         if current_user != reservation.user_id:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         reservation.name = data.get('name') or reservation.name
-        reservation.pet = data.get('pet') or reservation.pet
-        reservation.service = data.get('service') or reservation.service
+        reservation.description = data.get('description') or reservation.description
+        reservation.duration = data.get('duration') or reservation.duration
 
         reservation.save()
         return reservation_schema.dump(reservation), HTTPStatus.OK
@@ -68,8 +68,8 @@ class ReservationResource(Resource):
         if current_user != reservation.user_id:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         reservation.name = json_data['name']
-        reservation.pet = json_data['pet']
-        reservation.service = json_data['service']
+        reservation.description = json_data['description']
+        reservation.duration = json_data['duration']
         reservation.save()
         return reservation.data(), HTTPStatus.OK
 

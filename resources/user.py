@@ -1,11 +1,9 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
-
 from utils import hash_password
 from models.user import User
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
-
 from schemas.user import UserSchema
 
 user_schema = UserSchema()

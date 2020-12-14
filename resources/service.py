@@ -11,7 +11,7 @@ service_list_schema = ServiceSchema(many=True)
 class ServiceListResource(Resource):
     def get(self):
         services = Service.get_all_published()
-        return servive_list_schema.dump(services).data, HTTPStatus.OK
+        return service_list_schema.dump(services).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):

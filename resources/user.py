@@ -1,11 +1,9 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
-
 from utils import hash_password
 from models.user import User
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
-
 from schemas.user import UserSchema
 
 user_schema = UserSchema()
@@ -17,7 +15,7 @@ class UserListResource(Resource):
         json_data = request.get_json()
         data, errors = user_schema.load(data=json_data)
         if errors:
-            return {'message': 'Validation errors', 'errors': errors},HTTPStatus.BAD_REQUEST
+            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
         if User.get_by_username(data.get('username')):
             return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST
         if User.get_by_email(data.get('email')):
@@ -25,8 +23,6 @@ class UserListResource(Resource):
         user = User(**data)
         user.save()
         return user_schema.dump(user).data, HTTPStatus.CREATED
-
-
 
 
 class UserResource(Resource):
@@ -48,5 +44,3 @@ class MeResource(Resource):
     def get(self):
         user = User.get_by_id(id=get_jwt_identity())
         return user_schema.dump(user).data, HTTPStatus.OK
-
-

@@ -8,6 +8,7 @@ from schemas.service import ServiceSchema
 service_schema = ServiceSchema()
 service_list_schema = ServiceSchema(many=True)
 
+
 class ServiceListResource(Resource):
     def get(self):
         services = Service.get_all_published()
@@ -19,7 +20,7 @@ class ServiceListResource(Resource):
         current_user = get_jwt_identity()
         data, errors = service_schema.load(data=json_data)
         if errors:
-            return {'message': "Validation errors", 'errors': errors},HTTPStatus.BAD_REQUEST
+            return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
         service = Service(**data)
         service.user_id = current_user
         service.save()

@@ -3,25 +3,47 @@ from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from models.reservation import Reservation
+from schemas.reservation import ReservationSchema
+
+reservation_schema = ReservationSchema()
+reservation_list_schema = ReservationSchema(many=True)
 
 
 class ReservationListResource(Resource):
     def get(self):
         reservations = Reservation.get_all_published()
-        data = []
-        for reservation in reservations:
-            if reservation.is_publish is True:
-                data.append(reservation.data())
-                return {'data': data}, HTTPStatus.OK
+        return reservation_list_schema.dump(reservations).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):
         json_data = request.get_json()
         current_user = get_jwt_identity()
-        reservation = Reservation(name=json_data['name'], pet=json_data['pet'], service=json_data['service'],
-                                  user_id=current_user)
+        data, errors = reservation_schema.load(data=json_data)
+        if errors:
+            return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
+        reservation = Reservation(**data)
+        reservation.user_id = current_user
         reservation.save()
-        return reservation.data(), HTTPStatus.CREATED
+        return reservation_schema.dump(reservation).data, HTTPStatus.CREATED
+
+    @jwt_required
+    def patch(self, reservation_id):
+        json_data = request.get_json()
+        data, errors = reservation_schema.load(data=json_data, partial=('name',))
+        if errors:
+            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+        reservation = Reservation.get_by_id(reservation_id=reservation_id)
+        if reservation is None:
+            return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != reservation.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        reservation.name = data.get('name') or reservation.name
+        reservation.pet = data.get('pet') or reservation.pet
+        reservation.service = data.get('service') or reservation.service
+
+        reservation.save()
+        return reservation_schema.dump(reservation).data, HTTPStatus.OK
 
 
 class ReservationResource(Resource):

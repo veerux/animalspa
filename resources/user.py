@@ -1,13 +1,21 @@
 from flask import request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
 from http import HTTPStatus
 from utils import hash_password
 from models.user import User
-from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
+from models.service import Service
+from models.reservation import Reservation
 from schemas.user import UserSchema
+from schemas.service import ServiceSchema
+from schemas.reservation import ReservationSchema
+from webargs import fields
+from webargs.flaskparser import use_kwargs
 
 user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email', ))
+service_list_schema = ServiceSchema(many=True)
+reservation_list_schema = ReservationSchema(many=True)
 
 
 class UserListResource(Resource):
@@ -37,6 +45,38 @@ class UserResource(Resource):
         else:
             data = user_public_schema.dump(user)
         return data, HTTPStatus.OK
+
+
+class UserServiceListResource(Resource):
+    @jwt_optional
+    @use_kwargs({'visibility': fields.Str(missing='public')})
+    def get(self, username, visibility):
+        user = User.get_by_username(username=username)
+        if user is None:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user == user.id and visibility in ['all', 'private']:
+            pass
+        else:
+            visibility = 'public'
+        services = Service.get_all_by_user(user_id=user.id, visibility=visibility)
+        return service_list_schema.dump(services), HTTPStatus.OK
+
+
+class UserReservationListResource(Resource):
+    @jwt_optional
+    @use_kwargs({'visibility': fields.Str(missing='public')})
+    def get(self, username, visibility):
+        user = User.get_by_username(username=username)
+        if user is None:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user == user.id and visibility in ['all', 'private']:
+            pass
+        else:
+            visibility = 'public'
+        reservations = Reservation.get_all_by_user(user_id=user.id, visibility=visibility)
+        return reservation_list_schema.dump(reservations), HTTPStatus.OK
 
 
 class MeResource(Resource):

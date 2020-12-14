@@ -86,16 +86,26 @@ class ServiceResource(Resource):
 
 
 class ServicePublishResource(Resource):
+    @jwt_required
     def put(self, service_id):
-        service = next((service for service in service_list if service.id == service_id), None)
+        service = Service.get_by_id(service_id=service_id)
         if service is None:
             return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != service.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         service.is_publish = True
+        service.save()
         return {}, HTTPStatus.NO_CONTENT
 
+    @jwt_required
     def delete(self, service_id):
-        service = next((service for service in service_list if service.id == service_id), None)
+        service = Service.get_by_id(service_id=service_id)
         if service is None:
             return {'message': 'service not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != service.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
         service.is_publish = False
+        service.save()
         return {}, HTTPStatus.NO_CONTENT

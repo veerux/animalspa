@@ -3,25 +3,27 @@ from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from models.service import Service
+from schemas.service import ServiceSchema
 
+service_schema = ServiceSchema()
+service_list_schema = ServiceSchema(many=True)
 
 class ServiceListResource(Resource):
     def get(self):
         services = Service.get_all_published()
-        data = []
-        for service in services:
-            if service.is_publish is True:
-                data.append(service.data())
-                return {'data': data}, HTTPStatus.OK
+        return servive_list_schema.dump(services).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):
         json_data = request.get_json()
         current_user = get_jwt_identity()
-        service = Service(name=json_data['name'], description=json_data['description'], duration=json_data['duration'],
-                          user_id=current_user)
+        data, errors = service_schema.load(data=json_data)
+        if errors:
+            return {'message': "Validation errors", 'errors': errors},HTTPStatus.BAD_REQUEST
+        service = Service(**data)
+        service.user_id = current_user
         service.save()
-        return service.data(), HTTPStatus.CREATED
+        return service_schema.dump(service).data, HTTPStatus.CREATED
 
     @jwt_required
     def patch(self, service_id):

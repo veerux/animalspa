@@ -23,6 +23,25 @@ class ServiceListResource(Resource):
         service.save()
         return service.data(), HTTPStatus.CREATED
 
+    @jwt_required
+    def patch(self, service_id):
+        json_data = request.get_json()
+        data, errors = service_schema.load(data=json_data, partial=('name',))
+        if errors:
+            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+        service = Service.get_by_id(service_id=service_id)
+        if service is None:
+            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != service.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        service.name = data.get('name') or service.name
+        service.description = data.get('description') or service.description
+        service.duration = data.get('duration') or service.duration
+
+        service.save()
+        return service_schema.dump(service).data, HTTPStatus.OK
+
 
 class ServiceResource(Resource):
 

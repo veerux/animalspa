@@ -22,7 +22,7 @@ class UserListResource(Resource):
             return {'message': 'email already used'}, HTTPStatus.BAD_REQUEST
         user = User(**data)
         user.save()
-        return user_schema.dump(user).data, HTTPStatus.CREATED
+        return user_schema.dump(user), HTTPStatus.CREATED
 
 
 class UserResource(Resource):
@@ -33,9 +33,9 @@ class UserResource(Resource):
             return {'message': 'user not found'}, HTTPStatus.NOT_FOUND
         current_user = get_jwt_identity()
         if current_user == user.id:
-            data = user_schema.dump(user).data
+            data = user_schema.dump(user)
         else:
-            data = user_public_schema.dump(user).data
+            data = user_public_schema.dump(user)
         return data, HTTPStatus.OK
 
 
@@ -43,4 +43,4 @@ class MeResource(Resource):
     @jwt_required
     def get(self):
         user = User.get_by_id(id=get_jwt_identity())
-        return user_schema.dump(user).data, HTTPStatus.OK
+        return user_schema.dump(user), HTTPStatus.OK

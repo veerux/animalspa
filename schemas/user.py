@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields
 from utils import hash_password
 
+
 class UserSchema(Schema):
     class Meta:
         ordered = True
@@ -13,6 +14,3 @@ class UserSchema(Schema):
 
     def load_password(self, value):
         return hash_password(value)
-
-
-

@@ -6,7 +6,7 @@ from extensions import db, jwt
 from resources.user import UserListResource, UserResource, MeResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
 from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource
-from resources.token import TokenResource
+from resources.token import TokenResource, RefreshResource
 
 
 def create_app():
@@ -40,6 +40,7 @@ def register_resources(app):
     api.add_resource(ReservationPublishResource, '/reservations/<int:service_id>/publish')
     #token
     api.add_resource(TokenResource, '/token')
+    api.add_resource(RefreshResource, '/refresh')
 
 
 if __name__ == '__main__':

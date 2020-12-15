@@ -9,6 +9,7 @@ class ReservationSchema(Schema):
     name = fields.String(required=True, validate=[validate.Length(max=100)])
     pet = fields.String(validate=[validate.Length(max=200)])
     service = fields.String(validate=[validate.Length(max=200)])
+    duration = fields.Integer()
     is_publish = fields.Boolean(dump_only=True)
 
     author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id', 'username'])

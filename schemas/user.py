@@ -5,7 +5,6 @@ from utils import hash_password
 class UserSchema(Schema):
     class Meta:
         ordered = True
-
     id = fields.Int(dump_only=True)
     username = fields.String(required=True)
     email = fields.Email(required=True)

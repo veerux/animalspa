@@ -45,8 +45,8 @@ def register_resources(app):
     api.add_resource(ServicePublishResource, '/services/<int:service_id>/publish')
     # reservations
     api.add_resource(ReservationListResource, '/reservations')
-    api.add_resource(ReservationResource, '/reservations/<int:service_id>')
-    api.add_resource(ReservationPublishResource, '/reservations/<int:service_id>/publish')
+    api.add_resource(ReservationResource, '/reservations/<int:reservation_id>')
+    api.add_resource(ReservationPublishResource, '/reservations/<int:reservation_id>/publish')
     # token
     api.add_resource(TokenResource, '/token')
     api.add_resource(RefreshResource, '/refresh')

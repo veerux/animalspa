@@ -12,6 +12,7 @@ from schemas.reservation import ReservationSchema
 from webargs import fields
 from webargs.flaskparser import use_kwargs
 
+
 user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email', ))
 service_list_schema = ServiceSchema(many=True)
@@ -20,16 +21,22 @@ reservation_list_schema = ReservationSchema(many=True)
 
 class UserListResource(Resource):
     def post(self):
+
         json_data = request.get_json()
         data, errors = user_schema.load(data=json_data)
+
         if errors:
             return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+
         if User.get_by_username(data.get('username')):
             return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST
+
         if User.get_by_email(data.get('email')):
             return {'message': 'email already used'}, HTTPStatus.BAD_REQUEST
+
         user = User(**data)
         user.save()
+
         return user_schema.dump(user), HTTPStatus.CREATED
 
 

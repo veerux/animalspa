@@ -10,8 +10,11 @@ reservation_list_schema = ReservationSchema(many=True)
 
 
 class ReservationListResource(Resource):
+    @jwt_required
     def get(self):
-        reservations = Reservation.get_all_published()
+        current_user = get_jwt_identity()
+        if current_user
+        reservations = Reservation.get_all_by_user()
         return reservation_list_schema.dump(reservations), HTTPStatus.OK
 
     @jwt_required

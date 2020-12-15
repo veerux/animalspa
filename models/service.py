@@ -1,6 +1,8 @@
 from extensions import db
 
 
+
+
 class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)

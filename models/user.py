@@ -11,6 +11,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
     services = db.relationship('Service', backref='user')
+    reservation = db.relationship('Reservation', backref='user')
 
     @classmethod
     def get_by_username(cls, username):

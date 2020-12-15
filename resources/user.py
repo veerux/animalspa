@@ -23,8 +23,7 @@ class UserListResource(Resource):
     def post(self):
 
         json_data = request.get_json()
-        data, errors = user_schema.load(data=json_data)
-
+        data,errors = user_schema.load(data=json_data)
         if errors:
             return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
 

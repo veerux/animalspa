@@ -22,3 +22,10 @@ class ReservationSchema(Schema):
         if many:
             return {'data': data}
         return data
+
+    @validates('duration')
+    def validate_duration(self, value):
+        if value < 1:
+            raise ValidationError('Duration must be greater than 0.')
+        if value > 300:
+           raise ValidationError('Duration must not be greater than 300.')

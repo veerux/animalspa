@@ -21,3 +21,4 @@ class ReservationSchema(Schema):
         if many:
             return {'data': data}
         return data
+

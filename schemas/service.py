@@ -8,6 +8,7 @@ class ServiceSchema(Schema):
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True, validate=[validate.Length(max=100)])
     description = fields.String(validate=[validate.Length(max=500)])
+    duration = fields.Integer()
     is_publish = fields.Boolean(dump_only=True)
     author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id', 'username'])
     created_at = fields.DateTime(dump_only=True)

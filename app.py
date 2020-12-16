@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from config import Config
 from extensions import db, jwt
-from resources.user import UserListResource,UserResource, MeResource,UserServiceListResource,\
+from resources.user import UserListResource, UserResource, MeResource, UserServiceListResource,\
     UserReservationListResource
 from resources.service import ServiceListResource, ServiceResource, ServicePublishResource
 from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource

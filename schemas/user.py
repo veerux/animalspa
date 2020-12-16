@@ -14,7 +14,3 @@ class UserSchema(Schema):
 
     def load_password(self, value):
         return hash_password(value)
-
-
-
-

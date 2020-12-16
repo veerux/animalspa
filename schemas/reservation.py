@@ -28,4 +28,4 @@ class ReservationSchema(Schema):
         if value < 1:
             raise ValidationError('Duration must be greater than 0.')
         if value > 300:
-           raise ValidationError('Duration must not be greater than 300.')
+            raise ValidationError('Duration must not be greater than 300.')

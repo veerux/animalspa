@@ -8,6 +8,7 @@ from schemas.reservation import ReservationSchema
 reservation_schema = ReservationSchema()
 reservation_list_schema = ReservationSchema(many=True)
 
+
 class ReservationListResource(Resource):
     def get(self):
         reservation = Reservation.get_all_published()
@@ -18,8 +19,8 @@ class ReservationListResource(Resource):
         json_data = request.get_json()
         current_user = get_jwt_identity()
         data = reservation_schema.load(data=json_data)
-        #if errors:
-            #return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
+        # if errors:
+        # return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
         reservation = Reservation(**data)
         reservation.user_id = current_user
         reservation.save()

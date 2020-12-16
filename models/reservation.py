@@ -13,7 +13,6 @@ class Reservation(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
 
-
     @classmethod
     def get_all_published(cls):
         return cls.query.filter_by(is_publish=True).all()

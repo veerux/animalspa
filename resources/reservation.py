@@ -19,8 +19,6 @@ class ReservationListResource(Resource):
         json_data = request.get_json()
         current_user = get_jwt_identity()
         data = reservation_schema.load(data=json_data)
-        # if errors:
-        # return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
         reservation = Reservation(**data)
         reservation.user_id = current_user
         reservation.save()

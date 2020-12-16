@@ -18,9 +18,9 @@ class ServiceListResource(Resource):
     def post(self):
         json_data = request.get_json()
         current_user = get_jwt_identity()
-        data, errors = service_schema.load(data=json_data)
-        if errors:
-            return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
+        data = service_schema.load(data=json_data)
+        #if errors:
+            #return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
         service = Service(**data)
         service.user_id = current_user
         service.save()

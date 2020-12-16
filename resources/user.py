@@ -23,9 +23,11 @@ class UserListResource(Resource):
     def post(self):
 
         json_data = request.get_json()
-        data,errors = user_schema.load(data=json_data)
-        if errors:
-            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+        data = user_schema.load(data=json_data)
+        # current version of marshmallow doesn't work as in the book,
+        # schema.load doesn't return a tuple so to get post working we had to delete the variable errors
+        #if errors:
+            #return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
 
         if User.get_by_username(data.get('username')):
             return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST

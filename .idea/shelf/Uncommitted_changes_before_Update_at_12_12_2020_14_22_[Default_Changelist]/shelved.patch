@@ -1,0 +1,49 @@
+Index: resources/reservation.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import request\r\nfrom flask_restful import Resource\r\nfrom http import HTTPStatus\r\nfrom flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional\r\n\r\n\r\nclass ReservationListResource(Resource):\r\n    def get(self):\r\n        reservations = Reservation.get_all_published()\r\n        data = []\r\n        for reservation in reservations:\r\n            if reservation.is_publish is True:\r\n                data.append(reservation.data)\r\n                return {'data': data}, HTTPStatus.OK\r\n\r\n    @jwt_required\r\n    def post(self):\r\n        json_data = request.get_json()\r\n        current_user = get_jwt_identity()\r\n        reservation = Reservation(name=json_data['name'], description=json_data['pet'], duration=json_data['service'],\r\n                        user_id=current_user)\r\n        reservation.save()\r\n        return reservation.data(), HTTPStatus.CREATED\r\n\r\n\r\nclass ReservationResource(Resource):\r\n\r\n    @jwt_optional\r\n    def get(self, reservation_id):\r\n        reservation = Reservation.get_by_id(reservation_id=reservation_id)\r\n        if reservation is None:\r\n            return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND\r\n        current_user = get_jwt_identity()\r\n\r\n        if reservation.is_publish == False and reservation.user_id != current_user:\r\n            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN\r\n\r\n        return reservation.data(), HTTPStatus.OK\r\n\r\n    @jwt_required\r\n    def put(self, reservation_id):\r\n        json_data = request.get_json()\r\n        reservation = Reservation.get_by_id(reservation_id=reservation_id)\r\n        if reservation is None:\r\n            return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND\r\n        current_user = get_jwt_identity()\r\n\r\n        if current_user != reservation.user_id:\r\n            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN\r\n        reservation.name = json_data['name']\r\n        reservation.description = json_data['description']\r\n        reservation.duration = json_data['duration']\r\n\r\n        reservation.save()\r\n        return reservation.data(), HTTPStatus.OK\r\n\r\n\r\nclass ReservationPublishResource(Resource):\r\n    def put(self, reservation_id):\r\n        reservation = next((reservation for reservation in reservation_list if reservation.id == reservation_id), None)\r\n        if reservation is None:\r\n            return {'message': 'reservation not found'}, HTTPStatus.NOT_FOUND\r\n        reservation.is_publish = True\r\n        return {}, HTTPStatus.NO_CONTENT\r\n\r\n    def delete(self, reservation_id):\r\n        reservation = next((reservation for reservation in reservation_list if reservation.id == reservation_id), None)\r\n        if reservation is None:\r\n            return {'message': 'reservation not found'}, HTTPStatus.NOT_FOUND\r\n        reservation.is_publish = False\r\n        return {}, HTTPStatus.NO_CONTENT\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/reservation.py b/resources/reservation.py
+--- a/resources/reservation.py	(revision 6939155c1a3788c70f43f1e8ded438cb53d7c5e9)
++++ b/resources/reservation.py	(date 1607775574542)
+@@ -17,7 +17,7 @@
+     def post(self):
+         json_data = request.get_json()
+         current_user = get_jwt_identity()
+-        reservation = Reservation(name=json_data['name'], description=json_data['pet'], duration=json_data['service'],
++        reservation = Reservation(name=json_data['name'], pet=json_data['pet'], service=json_data['service'],
+                         user_id=current_user)
+         reservation.save()
+         return reservation.data(), HTTPStatus.CREATED
+@@ -48,8 +48,8 @@
+         if current_user != reservation.user_id:
+             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+         reservation.name = json_data['name']
+-        reservation.description = json_data['description']
+-        reservation.duration = json_data['duration']
++        reservation.pet = json_data['pet']
++        reservation.service = json_data['service']
+ 
+         reservation.save()
+         return reservation.data(), HTTPStatus.OK
+Index: resources/service.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import request\r\nfrom flask_restful import Resource\r\nfrom http import HTTPStatus\r\nfrom flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional\r\n\r\n\r\nclass ServiceListResource(Resource):\r\n    def get(self):\r\n        services = Service.get_all_published()\r\n        data = []\r\n        for service in services:\r\n            if service.is_publish is True:\r\n                data.append(service.data)\r\n                return {'data': data}, HTTPStatus.OK\r\n\r\n    @jwt_required\r\n    def post(self):\r\n        json_data = request.get_json()\r\n        current_user = get_jwt_identity()\r\n        service = Service(name=json_data['name'], description=json_data['description'], duration=json_data['duration'],\r\n                        user_id=current_user)\r\n        service.save()\r\n        return service.data(), HTTPStatus.CREATED\r\n\r\n\r\nclass ServiceResource(Resource):\r\n\r\n    @jwt_optional\r\n    def get(self, service_id):\r\n        service = Service.get_by_id(service_id=service_id)\r\n        if service is None:\r\n            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND\r\n        current_user = get_jwt_identity()\r\n\r\n        if service.is_publish == False and service.user_id != current_user:\r\n            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN\r\n\r\n        return service.data(), HTTPStatus.OK\r\n\r\n    @jwt_required\r\n    def put(self, service_id):\r\n        json_data = request.get_json()\r\n        service = Service.get_by_id(service_id=service_id)\r\n        if service is None:\r\n            return {'message': 'Service not found'}, HTTPStatus.NOT_FOUND\r\n        current_user = get_jwt_identity()\r\n\r\n        if current_user != service.user_id:\r\n            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN\r\n        service.name = json_data['name']\r\n        service.description = json_data['description']\r\n        service.duration = json_data['duration']\r\n\r\n        service.save()\r\n        return service.data(), HTTPStatus.OK\r\n\r\n\r\nclass ServicePublishResource(Resource):\r\n    def put(self, service_id):\r\n        service = next((service for service in service_list if service.id == service_id), None)\r\n        if service is None:\r\n            return {'message': 'service not found'}, HTTPStatus.NOT_FOUND\r\n        service.is_publish = True\r\n        return {}, HTTPStatus.NO_CONTENT\r\n\r\n    def delete(self, service_id):\r\n        service = next((service for service in service_list if service.id == service_id), None)\r\n        if service is None:\r\n            return {'message': 'service not found'}, HTTPStatus.NOT_FOUND\r\n        service.is_publish = False\r\n        return {}, HTTPStatus.NO_CONTENT\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/service.py b/resources/service.py
+--- a/resources/service.py	(revision 6939155c1a3788c70f43f1e8ded438cb53d7c5e9)
++++ b/resources/service.py	(date 1607775249174)
+@@ -10,7 +10,7 @@
+         data = []
+         for service in services:
+             if service.is_publish is True:
+-                data.append(service.data)
++                data.append(service.data())
+                 return {'data': data}, HTTPStatus.OK
+ 
+     @jwt_required

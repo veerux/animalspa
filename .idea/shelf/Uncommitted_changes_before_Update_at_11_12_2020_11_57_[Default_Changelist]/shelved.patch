@@ -1,0 +1,20 @@
+Index: requirements.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Flask==1.1.2\r\nFlask-RESTful==0.3.8\r\nhttpie==2.3.0\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/requirements.txt b/requirements.txt
+--- a/requirements.txt	(revision 4a67b956a6e5160e97b60deeb83dbd0493a2b1cc)
++++ b/requirements.txt	(date 1607680653437)
+@@ -1,4 +1,7 @@
+ Flask==1.1.2
+ Flask-RESTful==0.3.8
+ httpie==2.3.0
+-
++Flask-SQLAlchemy==2.4.4
++Flask-Migrate==2.5.3
++psycopg2-binary==2.8.6
++passlib==1.7.4
+\ No newline at end of file

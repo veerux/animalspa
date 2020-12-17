@@ -27,9 +27,7 @@ class ReservationListResource(Resource):
     @jwt_required
     def patch(self, reservation_id):
         json_data = request.get_json()
-        data, errors = reservation_schema.load(data=json_data, partial=('name',))
-        if errors:
-            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+        data = reservation_schema.load(data=json_data, partial=('name',))
         reservation = Reservation.get_by_id(reservation_id=reservation_id)
         if reservation is None:
             return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND

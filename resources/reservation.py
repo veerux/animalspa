@@ -72,6 +72,25 @@ class ReservationResource(Resource):
         return reservation.data(), HTTPStatus.OK
 
     @jwt_required
+    def patch(self, reservation_id):
+        json_data = request.get_json()
+        data = reservation_schema.load(data=json_data, partial=('name',))
+        reservation = Reservation.get_by_id(reservation_id=reservation_id)
+        if reservation is None:
+            return {'message': 'Reservation not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        if current_user != reservation.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        reservation.name = data.get('name') or reservation.name
+        reservation.pet = data.get('pet') or reservation.pet
+        reservation.service = data.get('service') or reservation.service
+        reservation.duration = data.get('duration') or reservation.duration
+
+        reservation.save()
+        return reservation_schema.dump(reservation), HTTPStatus.OK
+
+
+    @jwt_required
     def delete(self, reservation_id):
         reservation = Reservation.get_by_id(reservation_id=reservation_id)
         if reservation is None:
